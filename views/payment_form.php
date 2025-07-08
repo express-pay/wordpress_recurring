@@ -43,6 +43,8 @@
                 </div>
             </div>
 
+            <input type="hidden" id="expresspay-payment-purpose" value="<?php echo esc_attr($info); ?>" />
+
             <div class="row" id="payment-sum">
                 <div class="label">
                     <label for="expresspay-payment-sum"><?php esc_html_e('Amount', 'wordpress_expresspay') ?></label>
@@ -124,7 +126,7 @@
                 <div class="modal-content">
                     <span class="close-btn" id="close-info-modal">&times;</span>
                     <h2>Что такое рекуррентные платежи?</h2>
-                    <p>Каждый месяц с Вашей банковской карты будет происходить автоматическое списание суммы, которую вы установили. Это значит, что организация каждый месяц автоматически будет получать Ваше пожертвование.</p>
+                    <p>Каждый месяц с Вашей банковской карты будет происходить автоматическое списание суммы, которую вы установили. Это значит, что Организация каждый месяц автоматически будет получать Ваше пожертвование.</p>
                     <p>Вы можете перечислять любую, удобную Вам сумму.</p>
                     <p>Списания с карты проводит банк. У нас нет номера Вашей карты, все Ваши банковские данные хранятся только в банке.</p>
                     <p>Вы можете отменить подписку на ежемесячные списания по ссылке, которая будет отправлена на электронную почту после совершения пожертвования.</p>
@@ -153,7 +155,7 @@
                 <input type="hidden" name="AccountNo" id="expresspay-payment-account-no" value="" />
                 <input type="hidden" name="Amount" id="expresspay-payment-amount" value="" />
                 <input type="hidden" name="Currency" id="expresspay-payment-currency" value="" />
-                <input type="hidden" name="Info" id="expresspay-payment-info" value="Безвозмездное пожертвование" />
+                <input type="hidden" name="Info" id="expresspay-payment-info" value="" />
                 <input type="hidden" name="Surname" id="expresspay-payment-surname" value="" />
                 <input type="hidden" name="FirstName" id="expresspay-payment-first-name" value="" />
                 <input type="hidden" name="Patronymic" id="expresspay-payment-patronymic" value="" />

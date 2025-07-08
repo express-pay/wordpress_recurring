@@ -376,17 +376,31 @@ jQuery(document).ready(function () {
     }
 
     jQuery('#load-more-payments').click(function() {
-        const state = jQuery(this).data('state');
-        let cardsToShow;
-
-        if (state === 'initial') {
-            cardsToShow = jQuery('.payment-card.hidden[data-group="group1"]');
-            jQuery(this).data('state', 'secondary');
-        } else if (state === 'secondary') {
-            cardsToShow = jQuery('.payment-card.hidden[data-group="group2"]');
-            jQuery(this).hide();
+        const $button = jQuery(this);
+        const currentState = $button.data('state');
+        const groupSize = parseInt($button.data('group-size'));
+        const visibleCount = parseInt($button.data('visible-count'));
+        
+        let nextGroup;
+        if (currentState === 'initial') {
+            nextGroup = 1;
+            $button.data('state', 'group1');
+        } else {
+            const currentGroupNum = parseInt(currentState.replace('group', ''));
+            nextGroup = currentGroupNum + 1;
+            $button.data('state', 'group' + nextGroup);
         }
-
-        cardsToShow.removeClass('hidden').addClass('visible');
+        
+        const groupSelector = '.payment-card.hidden[data-group="group' + nextGroup + '"]';
+        const $nextGroupCards = jQuery(groupSelector);
+        
+        $nextGroupCards.removeClass('hidden').addClass('visible');
+        
+        const nextNextGroup = nextGroup + 1;
+        const hasMoreGroups = jQuery('.payment-card.hidden[data-group="group' + nextNextGroup + '"]').length > 0;
+        
+        if (!hasMoreGroups) {
+            $button.hide();
+        }
     });
 });

@@ -1,6 +1,5 @@
 <?php
 
-
 class ExpressPayPayment
 {
 
@@ -11,8 +10,9 @@ class ExpressPayPayment
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . "expresspay_options";
+        $info = isset($atts['info']) ? sanitize_text_field($atts['info']) : 'Добровольные взносы';
 
+        $table_name = $wpdb->prefix . "expresspay_options";
         $response = $wpdb->get_results("SELECT id, name, type, options, isactive FROM $table_name where isactive = 1");
 
         ob_start();
@@ -22,7 +22,7 @@ class ExpressPayPayment
         if (count($response) == 0) {
             ExpressPay::view("payment_method_empty", array('response' => $response));
         } else {
-            ExpressPay::view("payment_form", array('atts' => $atts, 'response' => $response, 'ajax_url' => admin_url('admin-ajax.php')));
+            ExpressPay::view("payment_form", array('info' => $info, 'response' => $response, 'ajax_url' => admin_url('admin-ajax.php')));
         }
 
         return ob_get_clean();
@@ -33,25 +33,36 @@ class ExpressPayPayment
      */
     static function payment_history_callback($atts, $content = null) {
         global $wpdb;
-    
+        
+        $limit = isset($atts['limit']) ? absint($atts['limit']) : 25;
+        $limit = min(max($limit, 1), 100);
+
+        $sum = isset($atts['sum']) ? absint($atts['sum']) : false;
+        
         $payments = $wpdb->get_results(
-            "SELECT payment_no, amount, dateofpayment, payer 
-            FROM " . EXPRESSPAY_TABLE_PAYMENTS . " 
-            WHERE visibility = 1 
-            ORDER BY dateofpayment DESC 
-            LIMIT 25"
+            $wpdb->prepare(
+                "SELECT payment_no, amount, dateofpayment, payer 
+                FROM " . EXPRESSPAY_TABLE_PAYMENTS . " 
+                WHERE visibility = 1 
+                ORDER BY dateofpayment DESC 
+                LIMIT %d",
+                $limit
+            )
         );
-
+        
         ob_start();
-
         ExpressPay::plugin_client_styles();
-    
+        
         if (empty($payments)) {
             ExpressPay::view("payment_history_empty", array());
         } else {
-            ExpressPay::view("payment_history", array('payments' => $payments));
+            ExpressPay::view("payment_history", array(
+                'payments' => $payments,
+                'collected' => $sum,
+                'limit' => $limit
+            ));
         }
-    
+        
         return ob_get_clean();
     }
 
@@ -86,8 +97,7 @@ class ExpressPayPayment
             $phone = sanitize_text_field($_REQUEST['phone'] ?? '');
             $visibility = isset($_REQUEST['visibility']) ? (int)$_REQUEST['visibility'] : 0;
             $url = sanitize_text_field($_REQUEST['url'] ?? '');
-
-            $info = 'Добровольные взносы';
+            $info = sanitize_text_field($_REQUEST['info'] ?? '');
 
             $noperiod = 0;
             $everyday = 1;

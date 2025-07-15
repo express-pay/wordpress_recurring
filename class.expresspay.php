@@ -907,26 +907,27 @@ class ExpressPay
             return '<p>Некорректный ответ от сервиса. Попробуйте позже или свяжите с технической поддержкой.</p>';
         }
 
-        $status = sanitize_text_field($data['Status']);
-        $card_number = sanitize_text_field($data['Card']);
-        $exp_date = isset($data['OfferExpDate']) ? sanitize_text_field($data['OfferExpDate']) : null;
+		$status = sanitize_text_field($data['Status']);
+		$card_number = sanitize_text_field($data['Card']);
+		$exp_date = isset($data['OfferExpDate']) ? sanitize_text_field($data['OfferExpDate']) : null;
 
-        $html = '<div class="card-info-container">';
-        $html .= '<h2>Информация о карте</h2>';
-        $html .= '<p><strong>Номер карты:</strong> ' . esc_html($card_number) . '</p>';
-        
-        if ($exp_date) {
-            $html .= '<p><strong>Действует до:</strong> ' . esc_html($exp_date) . '</p>';
-        }
-        
-        $html .= '<p><strong>Статус:</strong> ' . esc_html($status) . '</p>';
-        
-        if (strtolower($status) === 'привязана') {
-            $unbind_link = self::getUnbindLink($token, $service_id, $customer_id, $secretWord);
-            $html .= '<div>';
-            $html .= '<button class="unbind-btn" id="unbind_card_btn">Отвязать карту</button>';
-            $html .= '</div>';
-        }
+		$normalized_status = mb_strtolower(trim($status), 'UTF-8');
+
+		$html = '<div class="card-info-container">';
+		$html .= '<h2>Информация о карте</h2>';
+		$html .= '<p><strong>Номер карты:</strong> ' . esc_html($card_number) . '</p>';
+
+		if ($exp_date) {
+			$html .= '<p><strong>Действует до:</strong> ' . esc_html($exp_date) . '</p>';
+		}
+
+		$html .= '<p><strong>Статус:</strong> ' . esc_html($status) . '</p>';
+
+		if ($normalized_status === 'карта привязана' || $normalized_status === 'привязана') {
+			$html .= '<div class="unbind-section">';
+			$html .= '<button class="unbind-btn" id="unbind_card_btn">Отвязать карту</button>';
+			$html .= '</div>';
+		}
         
         $html .= '</div>';
 

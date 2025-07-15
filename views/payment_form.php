@@ -108,13 +108,13 @@
                 </div>
                 <div class="field">
                     <div class="button-group">
-                        <button type="button" id="btn-once" class="payment-btn" value="false">
+                        <button type="button" id="btn-once" class="payment-btn active" value="false">
                             <?php echo 'Единожды' ?>
                         </button>
                         <span class="info-icon">
                             <img src="<?php echo esc_url(plugins_url('views/admin/icons/info.png', dirname(__FILE__))); ?>" id="payment-type-info" alt="Info" title="Что это такое?">
                         </span>
-                        <button type="button" id="btn-recurring" class="payment-btn active" value="true">
+                        <button type="button" id="btn-recurring" class="payment-btn" value="true">
                             <?php echo 'Ежемесячно' ?>
                         </button>
                     </div>
